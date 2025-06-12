@@ -1,4 +1,5 @@
-var apiBaseUrl = "https://localhost:7272";
+import Globals from "./Globals.js";
+
 const messageDiv = document.getElementById("message");
 
 document.getElementById("loginForm").addEventListener("submit", async function(e) {
@@ -12,7 +13,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 });
 
 async function requestLogin(usernameInput, passwordInput, emailInput) {
-  const response = await fetch(apiBaseUrl + "/Auth/login", {
+  const response = await fetch(Globals.getapiBaseUrl() + "/Auth/login", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({ username: usernameInput, password: passwordInput, email: emailInput }),
@@ -22,8 +23,17 @@ async function requestLogin(usernameInput, passwordInput, emailInput) {
       messageDiv.style.color = "red";
     } else {
       const getToken = await response.json();
+      //Temporary
       localStorage.setItem('token', getToken.token);
-      window.location.href = '../pages/user.html';
+      if (localStorage.getItem('token') === null) {
+        console.log('token empty');
+        return;
+      }
+      if (await Globals.getUserDetails()) {
+        window.location.href = '../pages/user.html';
+        return;
+      }
+      console.log("Error on getting user details");
       return;
     }
     return;

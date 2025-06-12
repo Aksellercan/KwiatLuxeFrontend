@@ -7,7 +7,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   const messageDiv = document.getElementById("message");
 
   try {
-    const response = await fetch("https://senin-api-adresin/register", {
+    const response = await fetch("", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: usernameInput, email: emailInput, password: passwordInput }),
@@ -28,3 +28,11 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     messageDiv.style.color = "red";
   }
 });
+
+async function requestRegister() {
+  const response = await fetch("https://senin-api-adresin/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: usernameInput, email: emailInput, password: passwordInput }),
+    });
+}
