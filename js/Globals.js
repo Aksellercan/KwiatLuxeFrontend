@@ -7,7 +7,7 @@ function getapiBaseUrl() {
 async function getUserDetails() {
     const response = await fetch(apiBaseUrl + "/Auth/CurrentUser", {
         method: "GET",
-        headers: {"Authorization": `Bearer ${localStorage.getItem('token')}`}
+        headers: { "Authorization": `Bearer ${localStorage.getItem('token')}` }
     });
     if (response.status === 200) {
         const userDetails = await response.json();
@@ -23,7 +23,34 @@ async function getUserDetails() {
     }
 }
 
+async function LoginandGetUserData(usernameInput, passwordInput, emailInput) {
+    const response = await fetch(apiBaseUrl + "/Auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: usernameInput, password: passwordInput, email: emailInput }),
+    });
+    if (response.status != 200) {
+        console.log("Something went TERRIBLY wrong!!!");
+    } else {
+        const getToken = await response.json();
+        //Temporary
+        localStorage.setItem('token', getToken.token);
+        if (localStorage.getItem('token') === null) {
+            console.log('token empty');
+            return;
+        }
+        if (await getUserDetails()) {
+            window.location.href = '../pages/user.html';
+            return;
+        }
+        console.log("Error on getting user details");
+        return;
+    }
+    return;
+}
+
 export default {
     getapiBaseUrl,
-    getUserDetails
+    getUserDetails,
+    LoginandGetUserData
 }
