@@ -1,4 +1,5 @@
 const apiBaseUrl = "https://localhost:7272";
+const willReceivejsonToken = true; //for debuging and switching from cookies to token based JWT authentication
 
 function getapiBaseUrl() {
     return apiBaseUrl;
@@ -49,8 +50,13 @@ async function LoginandGetUserData(usernameInput, passwordInput, emailInput) {
     return;
 }
 
+function getWillReceivejsonToken() {
+    return willReceivejsonToken;
+}
+
 export default {
     getapiBaseUrl,
+    getWillReceivejsonToken,
     getUserDetails,
     LoginandGetUserData
 }

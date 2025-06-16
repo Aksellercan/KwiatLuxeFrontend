@@ -36,5 +36,4 @@ async function requestLogin(usernameInput, passwordInput, emailInput) {
       console.log("Error on getting user details");
       return;
     }
-    return;
 }
