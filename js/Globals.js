@@ -13,10 +13,10 @@ async function getUserDetails() {
     if (response.status === 200) {
         const userDetails = await response.json();
         //temporary method before implementing HTTP-Only Tokens
-        localStorage.setItem('id', userDetails.id);
-        localStorage.setItem('username', userDetails.username);
-        localStorage.setItem('email', userDetails.email);
-        localStorage.setItem('role', userDetails.role);
+        sessionStorage.setItem('id', userDetails.id);
+        sessionStorage.setItem('username', userDetails.username);
+        sessionStorage.setItem('email', userDetails.email);
+        sessionStorage.setItem('role', userDetails.role);
         return true
     } else {
         console.log(`Error: Status Code ${response.status}`);
@@ -50,12 +50,33 @@ async function LoginandGetUserData(usernameInput, passwordInput, emailInput) {
     return;
 }
 
+async function LoadProducts() {
+    const response = await fetch(apiBaseUrl + "/Product/getAll", {
+        method: "GET"
+    });
+    if (response.status === 200) {
+        const products = await response.json();
+        return products;
+    }
+    return null;
+}
+
 function getWillReceivejsonToken() {
     return willReceivejsonToken;
 }
 
+async function isLoggedin() {
+    if (sessionStorage.getItem("username") == null) {
+        await getUserDetails();
+        return false;
+    }
+    return true;
+}
+
 export default {
     getapiBaseUrl,
+    isLoggedin,
+    LoadProducts,
     getWillReceivejsonToken,
     getUserDetails,
     LoginandGetUserData

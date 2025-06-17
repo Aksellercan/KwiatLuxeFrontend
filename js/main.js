@@ -1,5 +1,7 @@
 import Globals from "./Globals.js";
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async function(event) {
+//document.addEventListener("DOMContentLoaded", () => {
+  await Globals.isLoggedin();
   showWelcomeMessage();
   loadProducts();
 
@@ -15,7 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function showWelcomeMessage() {
-  const username = localStorage.getItem("username") || "Guest";
+  // const username = localStorage.getItem("username") || "Guest";
+    const username = sessionStorage.getItem("username") || "Guest";
   const welcomeUser = document.getElementById("welcomeUser");
   if (welcomeUser) {
     welcomeUser.textContent = `Welcome, ${username}!`;
@@ -25,20 +28,13 @@ function showWelcomeMessage() {
 async function loadProducts() {
   const productGrid = document.getElementById("productGrid");
   if (!productGrid) return;
-
   try {
-    const response = await fetch(`${Globals.getapiBaseUrl()}/product/getAll`);
-    if (!response.ok) throw new Error("Failed to fetch products");
-    const products = await response.json();
-
-    // if (!products.length) {
-    //   showSampleProduct(productGrid);
-    // } else {
+    const products = await Globals.LoadProducts();
+    if (products === null) throw new Error("Failed to fetch products");
       productGrid.innerHTML = "";
       products.forEach(product => {
         productGrid.appendChild(createProductCard(product));
       });
-    // }
   } catch (error) {
     console.error("we couldnt find api:", error);
     showSampleProduct(productGrid);
@@ -89,5 +85,5 @@ function goToOrdersPage() {
 }
 
 function showProductModal(product) {
-  alert(`Product: ${product.name}\nDescription: ${product.description || "No description"}\nPrice: $${product.price.toFixed(2)}`);
+  alert(`Product: ${product.productName}\nDescription: ${product.productDescription || "No description"}\nPrice: $${product.productPrice.toFixed(2)}`);
 }

@@ -1,9 +1,10 @@
-const apiBaseUrl = "https://your-api-url.com"; // API URL'ni değiştir
+import Globals from "./Globals.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async function(event) {
+event.preventDefault();
   showWelcomeMessage();
   loadOrders();
-
+  Globals.isLoggedin();
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
@@ -13,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function showWelcomeMessage() {
-  const username = localStorage.getItem("username") || "Guest";
+  const username = sessionStorage.getItem("username") || "Guest";
   const welcomeUser = document.getElementById("welcomeUser");
   if (welcomeUser) {
     welcomeUser.textContent = `Welcome, ${username}!`;
@@ -28,7 +29,7 @@ async function loadOrders() {
   const token = localStorage.getItem("token");
 
   try {
-    const response = await fetch(`${apiBaseUrl}/orders`, {
+    const response = await fetch(`${Globals.getapiBaseUrl()}/order/myorders`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -58,22 +59,24 @@ function createOrderCard(order) {
 
   card.innerHTML = `
     <h3>Order #${order.id}</h3>
-    <p><strong>Date:</strong> ${new Date(order.date).toLocaleDateString()}</p>
-    <p><strong>Total Price:</strong> $${order.total.toFixed(2)}</p>
+    <p><strong>Date:</strong> ${new Date(order.orderDate).toLocaleDateString()}</p>
+    <p><strong>Total Price:</strong> $${order.totalAmount.toFixed(2)}</p>
     <div class="order-items">
       <strong>Items:</strong>
       <ul>
-        ${order.items.map(item => `<li>${item.name} x${item.quantity}</li>`).join("")}
+        ${order.orderProducts.map(orderProducts => `<li>${orderProducts.productId} x${orderProducts.quantity}</li>`).join("")}
       </ul>
     </div>
-  `;
+  `; //orderProducts does not have product name nor does it save the object. so we will have to iterate products on screen to api url /Product/get{id} d=====(￣▽￣*)b
 
   return card;
 }
 
 function logoutUser() {
-  localStorage.removeItem("username");
+  sessionStorage.removeItem("username");
+  sessionStorage.removeItem("email");
+  sessionStorage.removeItem("id");
+  sessionStorage.removeItem("role");
   localStorage.removeItem("token");
-  localStorage.removeItem("shoppingCart");
-  window.location.href = "pages/login.html";
+  window.location.href = "/pages/login.html";
 }
